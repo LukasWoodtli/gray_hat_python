@@ -120,7 +120,7 @@ class debugger():
                     thread_list.append(thread_entry.th32ThreadID)
                 success = kernel32.Thread32Next(snapshot, byref(thread_entry))
                     
-            kernel32.CloseHandle()
+            kernel32.CloseHandle(snapshot)
             return thread_list
         
         else:
@@ -131,8 +131,8 @@ class debugger():
         context = CONTEXT()
         context.ContextFlags = CONTEXT_FULL | CONTEXT_DEBUG_REGISTERS
         
-        if h_thread is None:
-            self.h_thread = self.open_thread(thread_id)
+        #if h_thread is None:
+        h_thread = self.open_thread(thread_id)
         
         if kernel32.GetThreadContext(h_thread, byref(context)):
             kernel32.CloseHandle(h_thread)
