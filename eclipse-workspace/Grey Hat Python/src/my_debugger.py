@@ -75,10 +75,12 @@ class debugger():
         debug_event         = DEBUG_EVENT()
         continue_status     = DBG_CONTINUE
         
-        if kernel32.WaitForDebugEvent(byref(debug_event), 100):
-            #dummy
-            # raw_input("Press a key to continue...")
-            # self.debugger_active    = False
+        if kernel32.WaitForDebugEvent(byref(debug_event), INFINITE):
+            
+            self.h_thred = self.open_thread(debug_event.dwThreadId)
+            self.context = self.get_thread_context(self.h_thread)
+
+            print "Event code: %d Thread ID: %d" % (debug_event.dwDebugEventCode, debug_event.dwThreadId)
             
             kernel32.ContinueDebugEvent( \
                          debug_event.dwProcessId, \
