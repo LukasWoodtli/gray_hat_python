@@ -15,8 +15,9 @@ class debugger():
         self.pid                = None
         self.debugger_active    = False
         self.h_thread           = None
-        self.context         =     None
-        
+        self.context            = None
+        self.exception          = None
+        self.exception_address   = None
     
     def load(self, path_to_exe):
         #...
@@ -82,6 +83,23 @@ class debugger():
 
             print "Event code: %d Thread ID: %d" % (debug_event.dwDebugEventCode, debug_event.dwThreadId)
             
+            if debug_event.dwDebugEventCode == EXCEPTION_DEBUG_EVENT:
+                exception = debug_event.u.Exception.ExceptionRecord.ExceptionCode
+                self.exception_address = debug_event.u.Exception.ExceptionRecord.ExceptionAddress
+                
+                if exception == EXCEPTION_ACCESS_VIOLATION:
+                    print 'Access violation detected!'
+            
+                elif exception == EXCEPTION_BREAKPOINT:
+                    continue_status = self.exception_handler_breakpoint()
+                    
+                elif exception == EXCEPTION_GUARD_PAGE:
+                    print "Guard Page Access Detected."
+                    
+                elif exception == EXCEPTION_SINGLE_STEP:
+                    print "Single Stepping"
+                    
+            
             kernel32.ContinueDebugEvent( \
                          debug_event.dwProcessId, \
                          debug_event.dwThreadId, \
@@ -142,5 +160,10 @@ class debugger():
         else:
             return False
         
-            
+    def exception_handler_breakpoint(self):
+        print "[*] Inside the breakpoint handler."
+        print "Exception Address: 0x%08x" % self.exception_address
+        
+        return DBG_CONTINUE
+        
         
