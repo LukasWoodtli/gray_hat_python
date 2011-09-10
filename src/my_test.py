@@ -4,6 +4,7 @@ Created on 16.07.2011
 @author: luki
 '''
 import my_debugger
+from my_debugger_defines import *
 
 debugger = my_debugger.debugger()
 
@@ -13,6 +14,10 @@ pid = raw_input("Enter the PID of the process to attach to: ")
 
 debugger.attach(int(pid))
 
+printf = debugger.func_resolve("C:\\windows\\system32\\msvcrt.dll", "printf")
+print "[*] Address of printf: 0x%08x" % printf
+
+debugger.bp_set_hw(printf, 1, HW_EXECUTE)
 debugger.run()
 
 
