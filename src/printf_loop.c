@@ -6,10 +6,12 @@ static void delay(DWORD Delay);
 
 int main(int argc, char** argv)
 {
+    int counter = 0;
     while (1)
     {
-        printf("Loop\n");
-        delay(5);
+        printf("Loop iteration %i\n", counter);
+        delay(200);
+        counter += 1;
     }
 
 }
